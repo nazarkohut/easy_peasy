@@ -50,3 +50,29 @@ class LoginView(APIView):
             'jwt': token
         }
         return response
+
+
+class UserView(APIView):
+    def get(self, request):
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+            raise AuthenticationFailed("Not Authenticated!")
+
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed("Not Authenticated!")
+        user = User.objects.filter(id=payload["id"]).first()
+        return Response({
+            "username": user.username,
+            "email": user.email
+            })
+        # temporary response because it's hardcoded for now
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        response = Response()
+        response.delete_cookie('jwt')
+        return Response({"message": "success"})
