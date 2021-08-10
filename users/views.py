@@ -8,11 +8,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from easy_peasy.settings import SECRET_KEY
-from users.serializers import RegisterSerializer
+from users.serializers import UserSerializer
 
 
 class RegisterView(generics.GenericAPIView):
-    serializer_class = RegisterSerializer
+    serializer_class = UserSerializer
 
     def post(self, request):
         user = request.data
@@ -25,7 +25,6 @@ class RegisterView(generics.GenericAPIView):
 
 class LoginView(APIView):
     def post(self, request):
-        email = request.data['email']
         username = request.data['username']
         password = request.data['password']
 
@@ -64,11 +63,8 @@ class UserView(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed("Not Authenticated!")
         user = User.objects.filter(id=payload["id"]).first()
-        return Response({
-            "username": user.username,
-            "email": user.email
-            })
-        # temporary response because it's hardcoded for now
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
 
 
 class LogoutView(APIView):
