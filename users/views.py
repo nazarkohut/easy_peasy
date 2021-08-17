@@ -1,12 +1,10 @@
 import datetime
-
 import jwt
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from easy_peasy.settings import SECRET_KEY
 from users.serializers import UserSerializer
 
