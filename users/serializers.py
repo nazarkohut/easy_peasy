@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 
 class UserSerializer(serializers.ModelSerializer):
+    email = serializers.CharField(required=True)
     first_name = serializers.CharField(max_length=100)
     last_name = serializers.CharField(max_length=100)
     password = serializers.CharField(max_length=100, min_length=6, write_only=True)
@@ -13,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['email', 'first_name', 'last_name', 'username', 'password']
 
     def validate(self, attrs):
-        email = attrs.get('email', '')
+        email = attrs.get('email', '')  # check unique
         username = attrs.get('username', '')
 
         if not username.isalnum():
