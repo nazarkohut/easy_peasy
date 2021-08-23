@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'profiles',
     'topics',
+    'problems',
 ]
 
 MIDDLEWARE = [
