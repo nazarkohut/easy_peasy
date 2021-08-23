@@ -1,6 +1,7 @@
 from django.db import models
 
 # Create your models here.
+from django.urls import reverse
 
 
 class Topic(models.Model):
@@ -24,6 +25,10 @@ class Problem(models.Model):
 
     def __str__(self):
         return self.task
+
+    # def get_absolute_url(self): # read about this
+    #     """Returns the url to access a particular instance of the model."""
+    #     return reverse('model-detail-view', args=[str(self.id)])
 
 
 class Tag(models.Model):

@@ -21,4 +21,4 @@ class ProblemListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Problem
         fields = '__all__'
-        depth = 2
+        depth = 1
