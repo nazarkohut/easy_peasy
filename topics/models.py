@@ -1,8 +1,5 @@
 from django.db import models
 
-# Create your models here.
-from django.urls import reverse
-
 
 class Topic(models.Model):
     name = models.CharField(max_length=30)
@@ -33,7 +30,7 @@ class Problem(models.Model):
 
 class Tag(models.Model):
     tag = models.CharField(max_length=30)
-    problems = models.ManyToManyField(Problem)
+    problems = models.ManyToManyField(Problem, related_name='tags')
 
     def __str__(self):
         return self.tag
