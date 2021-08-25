@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'profiles',
     'topics',
     'problems',
+    'tags',
 ]
 
 MIDDLEWARE = [

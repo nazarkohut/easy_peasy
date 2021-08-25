@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from topics.models import Problem, Tag
 
+
 class TagsForProblemSerializer(serializers.ModelSerializer):
     problems = serializers.ReadOnlyField(source='tags.problems')
     id = serializers.ReadOnlyField(source='tags')

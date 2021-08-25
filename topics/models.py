@@ -10,7 +10,7 @@ class Topic(models.Model):
 
 class Subtopic(models.Model):
     name = models.CharField(max_length=50)
-    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name='sub_topics')
 
     def __str__(self):
         return self.name
@@ -18,7 +18,7 @@ class Subtopic(models.Model):
 
 class Problem(models.Model):
     task = models.CharField(max_length=300)
-    sub_topics = models.ManyToManyField(Subtopic)
+    sub_topics = models.ManyToManyField(Subtopic, related_name='problems')
 
     def __str__(self):
         return self.task
