@@ -8,5 +8,5 @@ class ProblemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Problem
-        fields = ('id', 'task', 'sub_topics', 'tags', )
+        fields = ('id', 'problem', 'task', 'sub_topics', 'tags', 'complexity', 'accepted',  'attempts',)
         depth = 1

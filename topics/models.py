@@ -18,14 +18,21 @@ class Subtopic(models.Model):
 
 class Problem(models.Model):
     task = models.CharField(max_length=300)
+    complexity = models.IntegerField(default=None)
+    accepted = models.BigIntegerField(default=None)
+    attempts = models.BigIntegerField(default=None)
     sub_topics = models.ManyToManyField(Subtopic, related_name='problems')
 
     def __str__(self):
         return self.task
 
-    # def get_absolute_url(self): # read about this
-    #     """Returns the url to access a particular instance of the model."""
-    #     return reverse('model-detail-view', args=[str(self.id)])
+
+class Task(models.Model):
+    condition = models.TextField(max_length=1000)
+    problem = models.OneToOneField(Problem, on_delete=models.CASCADE, related_name='problem', default=None)  # check this field
+
+    def __str__(self):
+        return self.condition
 
 
 class Tag(models.Model):
