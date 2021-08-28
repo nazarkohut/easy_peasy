@@ -29,7 +29,7 @@ class Problem(models.Model):
 
 class Task(models.Model):
     condition = models.TextField(max_length=1000)
-    problem = models.OneToOneField(Problem, on_delete=models.CASCADE, related_name='problem', default=None)  # check this field
+    problem = models.OneToOneField(Problem, on_delete=models.CASCADE, related_name='problem', default=None)
 
     def __str__(self):
         return self.condition
