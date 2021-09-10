@@ -18,6 +18,7 @@ class Subtopic(models.Model):
 
 class Problem(models.Model):
     task = models.CharField(max_length=300)
+    images = models.ImageField(upload_to='images/', default=None)
     complexity = models.IntegerField(default=None)
     accepted = models.BigIntegerField(default=None)
     attempts = models.BigIntegerField(default=None)
