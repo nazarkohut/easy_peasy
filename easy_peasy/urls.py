@@ -19,4 +19,10 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
+    path('auth/', include('users.urls')),
+    path('profile/', include('profiles.urls')),
+    path('topics/', include('topics.urls')),  # list of problems sorted by topics
+    path('problem/', include('problems.urls')),  # particular problem
+    path('tags/', include('tags.urls')),  # list of problems sorted by tags
+    path('all/', include('problems_list.urls')),  # list with all problems
 ]
