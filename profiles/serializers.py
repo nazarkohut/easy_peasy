@@ -9,7 +9,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['bio', 'location']
+        fields = ['bio', 'location', 'image']
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):

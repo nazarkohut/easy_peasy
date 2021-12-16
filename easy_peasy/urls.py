@@ -23,6 +23,6 @@ urlpatterns = [
     path('profile/', include('profiles.urls')),
     path('topics/', include('topics.urls')),  # list of problems sorted by topics
     path('problem/', include('problems.urls')),  # particular problem
-    path('tags/', include('tags.urls')),  # list of problems sorted by tags
+    path('tags/', include('tags.urls')),  # list of problems sorted by tags #
     path('all/', include('problems_list.urls')),  # list with all problems
 ]

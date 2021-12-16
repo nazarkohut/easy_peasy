@@ -14,7 +14,10 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['email', 'first_name', 'last_name', 'username', 'password']
 
     def validate(self, attrs):
-        email = attrs.get('email', '')  # check unique
+        email = attrs.get('email', '')
+        if len(User.objects.filter(email=email).all()) == 1:
+            raise serializers.ValidationError("User with this email already exist")
+
         username = attrs.get('username', '')
 
         if not username.isalnum():
