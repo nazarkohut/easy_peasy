@@ -14,6 +14,8 @@ class TagsForSortedByTagsListSerializer(serializers.ModelSerializer):
 class ProblemsSortedByTagsListSerializer(serializers.ModelSerializer):
     tags = TagsForSortedByTagsListSerializer(many=True)
     sub_topics = serializers.ReadOnlyField(source='')
+    condition = serializers.ReadOnlyField(source='')
+    answer = serializers.ReadOnlyField(source='')
 
     class Meta:
         model = Problem

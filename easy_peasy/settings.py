@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'topics',
     'problems',
     'tags',
-    'problems_list',
 ]
 
 MIDDLEWARE = [

@@ -39,8 +39,8 @@ class Problem(models.Model):
 
 
 class ProblemImage(models.Model):
-    images = models.ImageField(upload_to='images/', default='image_link')
-    problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name="problem_image")
+    image = models.ImageField(upload_to='images/', default='image_link')
+    problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name="images")
 
     class Meta:
         db_table = "problem_image"

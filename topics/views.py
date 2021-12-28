@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from topics.models import Topic, Subtopic, Problem
+from topics.models import Topic, Subtopic
 from topics.serializers import SubtopicsListSerializer, ProblemsListSerializer
 
 

@@ -5,8 +5,16 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.utils import json
 
-from problems.serializers import ProblemSerializer, ImagesForProblemSerializer, SubmitProblemSerializer
+from misc.converters import custom_response_with_lists
+from problems.serializers import ProblemSerializer, SubmitProblemSerializer, \
+    AllProblemsListSerializer
 from topics.models import Problem
+
+
+class AllProblemsListView(generics.ListAPIView):
+    # permission_classes = (IsAuthenticated, )
+    serializer_class = AllProblemsListSerializer
+    queryset = Problem.objects.all()
 
 
 class ProblemView(generics.RetrieveAPIView):
@@ -15,6 +23,13 @@ class ProblemView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         return Problem.objects.filter(id=self.kwargs['pk'])
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+        data = custom_response_with_lists(data=data, first_level=('images', 'tags'), second_level=('image', 'tag'))
+        return Response(data)
 
 
 class SubmitProblemView(generics.GenericAPIView):  # 0.0 == 0
