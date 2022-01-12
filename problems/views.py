@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -36,9 +34,19 @@ class SubmitProblemView(generics.GenericAPIView):  # 0.0 == 0
     # permission_classes = (IsAuthenticated, )
     serializer_class = SubmitProblemSerializer
 
-    def post(self, request, pk, **kwargs):
+    def put(self, request, pk, **kwargs):
         queryset = Problem.objects.filter(id=pk)
         user_answer = json.loads(request.body)
-        if queryset.values()[0]['answer'] != user_answer['answer']:
+        data = queryset.values()[0]
+        if data['answer'] != user_answer['answer']:
+            self.increment_problem_fields(queryset, data, is_correct_answer=False)
             return Response({"message": "Wrong Answer"})
+        self.increment_problem_fields(queryset, data, is_correct_answer=True)
         return Response({"message": "Accepted"})
+
+    @staticmethod
+    def increment_problem_fields(queryset, data, is_correct_answer):
+        del data['answer']
+        data['attempts'] += 1
+        data['accepted'] = data['accepted'] + 1 if is_correct_answer else data['accepted']
+        queryset.update(**data)

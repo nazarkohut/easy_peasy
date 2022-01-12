@@ -6,9 +6,9 @@ from django.dispatch import receiver
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='userprofile')
-    bio = models.TextField(max_length=250)
-    location = models.CharField(max_length=100)
+    user = models.OneToOneField(User, on_delete=models.SET_NULL, related_name='userprofile', null=True)
+    bio = models.TextField(max_length=256)
+    location = models.CharField(max_length=128)
     image = models.ImageField(upload_to='profile_images/', default=None)
 
     class Meta:
