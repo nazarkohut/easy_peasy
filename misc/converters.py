@@ -1,3 +1,6 @@
+from collections import defaultdict
+
+
 def list_of_ordered_dict_to_list(list_of_ordered_dict: list, field: any) -> list:
     """
     Takes List[OrderDict] and field as a key of these dicts and converts them to list of values
@@ -26,3 +29,12 @@ def custom_response_with_lists(data: dict, first_level: tuple, second_level: tup
     for f, s in zip(first_level, second_level):
         data[f] = list_of_ordered_dict_to_list(data[f], s)
     return data
+
+
+def list_of_dicts_to_one_dict(lst: list, key_param: str, value_param: str) -> dict:
+    res = defaultdict(int)
+    for d in lst:
+        if key_param in d and value_param in d:
+            res[d[key_param]] = d[value_param]
+    return res
+
