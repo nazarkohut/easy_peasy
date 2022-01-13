@@ -9,6 +9,7 @@ from misc.converters import list_of_dicts_to_one_dict
 from tests.models import Test, ProblemTest, TestResult
 from tests.serializers import AllTestListSerializer, TestSerializer, SubmitTestSerializer
 from topics.models import Problem
+from users.models import UserProfile
 
 
 class AllTestsListView(generics.ListAPIView):
@@ -27,8 +28,8 @@ class TestView(generics.RetrieveAPIView):
         return Test.objects.filter(id=self.kwargs['pk'])
 
 
-class SubmitTestView(generics.GenericAPIView):  # this one is incomplete
-    # permission_classes = (IsAuthenticated, )
+class SubmitTestView(generics.GenericAPIView):
+    permission_classes = (IsAuthenticated, )
     serializer_class = SubmitTestSerializer
 
     def put(self, request, pk, **kwargs):
@@ -40,12 +41,13 @@ class SubmitTestView(generics.GenericAPIView):  # this one is incomplete
         data = list_of_dicts_to_one_dict(lst=queryset.values(), key_param='id', value_param='answer')
         # data validation starts here
         response, general_mark = self._check_test_answers(correct_answers=data, user_answers=user_answers, costs=costs)
-        self.insert_row_to_test_result(data=response, mark=general_mark)
+        self.insert_row_to_test_result(data=response, mark=general_mark, user_id=request.user.id)
         return Response(response, status=200)
 
     @staticmethod
-    def insert_row_to_test_result(data: list, mark: int):
-        test_result = TestResult(mark=mark, problems_info=data)  # need to relate user_profile
+    def insert_row_to_test_result(data: list, mark: int, user_id: int):
+        profile = UserProfile.objects.get(user_id=user_id)
+        test_result = TestResult(mark=mark, problems_info=data, user_profile=profile)
         test_result.save(force_insert=True)
 
     @staticmethod
