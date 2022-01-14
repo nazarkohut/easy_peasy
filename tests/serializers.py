@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from tests.models import Test
+from tests.models import Test, TestResult
 from topics.models import Problem
 
 
@@ -30,4 +30,11 @@ class TestSerializer(serializers.ModelSerializer):
 class SubmitTestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Test
+        fields = '__all__'
+
+
+# ----------------------
+class TestResultReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TestResult
         fields = '__all__'

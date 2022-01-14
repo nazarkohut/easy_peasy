@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+from django.db.models import Q
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -7,7 +8,7 @@ from rest_framework.utils import json
 
 from misc.converters import list_of_dicts_to_one_dict
 from tests.models import Test, ProblemTest, TestResult
-from tests.serializers import AllTestListSerializer, TestSerializer, SubmitTestSerializer
+from tests.serializers import AllTestListSerializer, TestSerializer, SubmitTestSerializer, TestResultReviewSerializer
 from topics.models import Problem
 from users.models import UserProfile
 
@@ -29,7 +30,7 @@ class TestView(generics.RetrieveAPIView):
 
 
 class SubmitTestView(generics.GenericAPIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
     serializer_class = SubmitTestSerializer
 
     def put(self, request, pk, **kwargs):
@@ -78,3 +79,14 @@ class SubmitTestView(generics.GenericAPIView):
                 curr = invalid_answer(curr)
             res.append(curr)
         return [res, general_mark]
+
+
+class TestResultReviewView(generics.RetrieveAPIView):  # get particular test_result of
+    # particular user(profile_id and test_id) # user must be authenticated
+    permission_classes = (IsAuthenticated,)
+    serializer_class = TestResultReviewSerializer
+
+    def get_queryset(self):
+        profile = UserProfile.objects.get(user_id=self.request.user.id)
+        return TestResult.objects.filter(Q(id=self.kwargs['pk']) and Q(user_profile_id=profile.id))
+        # I probably will handle some cases not as NotFound, later.
