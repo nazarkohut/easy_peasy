@@ -45,7 +45,7 @@ class SubmitTestView(generics.GenericAPIView):  # this one is incomplete
 
     @staticmethod
     def insert_row_to_test_result(data: list, mark: int):
-        test_result = TestResult(mark=mark, problems_info=data)  # need to relate user_profile
+        test_result = TestResult(mark=mark, problems_info=data)
         test_result.save(force_insert=True)
 
     @staticmethod

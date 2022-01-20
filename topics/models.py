@@ -23,7 +23,7 @@ class Subtopic(models.Model):
 
 
 class Problem(models.Model):
-    task = models.CharField(max_length=256)
+    task = models.CharField(max_length=64, unique=True)
     complexity = models.IntegerField(default=None)
     accepted = models.BigIntegerField(default=None)
     attempts = models.BigIntegerField(default=None)

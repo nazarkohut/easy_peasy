@@ -30,7 +30,7 @@ class ProblemView(generics.RetrieveAPIView):
         return Response(data)
 
 
-class SubmitProblemView(generics.GenericAPIView):  # 0.0 == 0
+class SubmitProblemView(generics.GenericAPIView):
     # permission_classes = (IsAuthenticated, )
     serializer_class = SubmitProblemSerializer
 
@@ -38,6 +38,7 @@ class SubmitProblemView(generics.GenericAPIView):  # 0.0 == 0
         queryset = Problem.objects.filter(id=pk)
         user_answer = json.loads(request.body)
         data = queryset.values()[0]
+        self.get_serializer().validate(user_answer)
         if data['answer'] != user_answer['answer']:
             self.increment_problem_fields(queryset, data, is_correct_answer=False)
             return Response({"message": "Wrong Answer"})

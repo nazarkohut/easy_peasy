@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from misc.validators import find_missing
 from topics.models import Problem, Tag, ProblemImage
 
 
@@ -18,13 +19,13 @@ class AllProblemsListSerializer(serializers.ModelSerializer):
 class ImagesForProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProblemImage
-        fields = ('image', )
+        fields = ('image',)
 
 
 class TagsForProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ('tag', )
+        fields = ('tag',)
 
 
 class ProblemSerializer(serializers.ModelSerializer):
@@ -33,7 +34,7 @@ class ProblemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Problem
-        fields = ('id', 'task', 'tags', 'complexity', 'accepted', 'attempts', 'condition', 'images', )
+        fields = ('id', 'task', 'tags', 'complexity', 'accepted', 'attempts', 'condition', 'images',)
         depth = 1
 
 
@@ -41,4 +42,13 @@ class ProblemSerializer(serializers.ModelSerializer):
 class SubmitProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Problem
-        fields = ('answer', )
+        fields = ('answer',)
+
+    def validate(self, attrs):  # have to implement 1.275 and 1.26 validation
+        missing = find_missing(self.fields, attrs)
+        if missing:
+            raise serializers.ValidationError(missing)
+        answer = attrs['answer']
+        if not isinstance(answer, float):
+            raise serializers.ValidationError({"message": "Answer must be float"})
+        return attrs
