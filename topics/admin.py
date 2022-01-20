@@ -1,9 +1,17 @@
 from django.contrib import admin
 
-from topics.models import Topic, Subtopic, Problem, Tag, Task
+from tests.admin import ProblemTestInline
+from topics.models import Topic, Subtopic, Problem, Tag, ProblemImage
 
 admin.site.register(Topic)
 admin.site.register(Subtopic)
-admin.site.register(Problem)
+
+
+@admin.register(Problem)
+class ProblemAdmin(admin.ModelAdmin):
+    inlines = (ProblemTestInline,)
+
+
 admin.site.register(Tag)
-admin.site.register(Task)
+# admin.site.register(Task)
+admin.site.register(ProblemImage)

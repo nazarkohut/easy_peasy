@@ -28,7 +28,7 @@ class ProblemsForSubtopicSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Problem
-        fields = ('task', 'id', 'sub_topics', 'complexity', 'accepted', 'attempts', 'images')
+        fields = ('task', 'id', 'sub_topics', 'complexity', 'accepted', 'attempts',)  # , 'images')
 
 
 class ProblemsListSerializer(serializers.ModelSerializer):
