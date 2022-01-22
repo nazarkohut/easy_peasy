@@ -5,9 +5,9 @@ from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.CharField(required=True)
-    first_name = serializers.CharField(max_length=100)
-    last_name = serializers.CharField(max_length=100)
-    password = serializers.CharField(max_length=100, min_length=6, write_only=True)
+    first_name = serializers.CharField(max_length=64)
+    last_name = serializers.CharField(max_length=64)
+    password = serializers.CharField(max_length=64, min_length=6, write_only=True)
 
     class Meta:
         model = User

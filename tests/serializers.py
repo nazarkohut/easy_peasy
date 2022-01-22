@@ -44,9 +44,9 @@ class SubmitTestSerializer(serializers.ModelSerializer):
                 raise ValidationError(
                     {"message": "Request body is not valid", "details": "Request body must be list of JSONs"})
             check_fields(fields=['id', 'answer'], data=item)
-            
+
             if not isinstance(item['id'], int):
                 raise ValidationError({"message": "id must be of type int"})
             if not isinstance(item['answer'], float):
                 raise ValidationError({"message": "answer must be of type float"})
-
+        return attrs

@@ -13,5 +13,4 @@ class ProblemAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Tag)
-# admin.site.register(Task)
 admin.site.register(ProblemImage)

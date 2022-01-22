@@ -1,10 +1,8 @@
 from collections import defaultdict
 
 from rest_framework import generics
-from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.utils import json
 
 from misc.converters import list_of_dicts_to_one_dict
 from tests.models import Test, ProblemTest, TestResult
@@ -36,7 +34,7 @@ class SubmitTestView(generics.GenericAPIView):
     def put(self, request, pk, **kwargs):
         cost_queryset = ProblemTest.objects.select_related("problem").filter(test_id=pk)
         queryset = Problem.objects.prefetch_related('problemtest_set').filter(problemtest__test_id=pk)
-        body = json.loads(request.body)
+        body = request.data
         self.get_serializer().validate(attrs=body)
         # converting query sets to convenient representation
         user_answers = list_of_dicts_to_one_dict(lst=body, key_param='id', value_param='answer')
@@ -73,7 +71,6 @@ class SubmitTestView(generics.GenericAPIView):
 
         res = list()
         general_mark = 0
-        # print(correct_answers, user_answers)
         for k in correct_answers.keys():
             curr = defaultdict(str)
 

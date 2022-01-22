@@ -1,5 +1,3 @@
-import datetime
-
 from django.db import models
 
 from topics.models import Problem
@@ -34,7 +32,7 @@ class ProblemTest(models.Model):
         db_table = "problem_test"
 
 
-class TestResult(models.Model):  # results of previous tests
+class TestResult(models.Model):  # results of previously passed tests
     user_profile = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, related_name="previous_tests", null=True)
     mark = models.IntegerField()
     test_time = models.DateTimeField(auto_now_add=True)
