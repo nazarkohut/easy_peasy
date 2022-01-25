@@ -2,18 +2,36 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
+
+from misc.validators import find_missing
+from tests.models import TestResult
 from users.models import UserProfile
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class TestsForProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TestResult
+        fields = ['id', 'mark', 'test_time']
 
+
+class ProfileSerializer(serializers.ModelSerializer):
+    previous_tests = TestsForProfileSerializer(many=True)
+
+    class Meta:
+        model = UserProfile
+        fields = ['bio', 'location', 'image', 'previous_tests']
+
+
+# --------------------------------------------
+# Have to think how user will add photos it is not clear for now
+class ProfileForUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['bio', 'location', 'image']
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):
-    userprofile = ProfileSerializer()
+    userprofile = ProfileForUpdateSerializer()
 
     class Meta:
         model = get_user_model()
@@ -34,6 +52,7 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
+# ------------------------------------------------------------------------
 class ChangePasswordSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
@@ -49,17 +68,20 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         return attrs
 
     def validate_old_password(self, value):
-        user = self.context['request'].user  # same
+        user = self.get_user(self.context['request'])
         if not user.check_password(value):
             raise serializers.ValidationError({"old_password": "Old password is not correct"})
         return value
 
     def update(self, instance, validated_data):
-        user = self.context['request'].user  # same
+        user = self.get_user(self.context['request'])
         if user.pk != instance.pk:
             raise serializers.ValidationError({"authorize": "You dont have permission for this user."})
 
         instance.set_password(validated_data['password'])
         instance.save()
-
         return instance
+
+    @staticmethod
+    def get_user(data):
+        return data.user

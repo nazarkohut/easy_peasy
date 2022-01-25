@@ -104,7 +104,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    'EXCEPTION_HANDLER': 'misc.exceptions.exception_handler'
+    'EXCEPTION_HANDLER': 'misc.exceptions.exceptions.exception_handler'
 }
 
 from datetime import timedelta

@@ -7,4 +7,3 @@ urlpatterns = [
     path('edit/<int:pk>/', EditProfileView.as_view(), name='edit'),
     path('change_password/<int:pk>/', ChangePassword.as_view(), name='change_password')
 ]
-
