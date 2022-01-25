@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from misc.validators import find_missing
 from tests.models import TestResult
 from users.models import UserProfile
 

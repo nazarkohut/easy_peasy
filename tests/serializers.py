@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from misc.validators import check_fields
-from tests.models import Test
+from tests.models import Test, TestResult
 from topics.models import Problem
 
 
@@ -50,3 +50,9 @@ class SubmitTestSerializer(serializers.ModelSerializer):
             if not isinstance(item['answer'], float):
                 raise ValidationError({"message": "answer must be of type float"})
         return attrs
+
+
+class TestResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TestResult
+        fields = ['mark', 'problems_info', 'test_time', 'user_profile_id']

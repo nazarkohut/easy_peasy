@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from misc.converters import list_of_dicts_to_one_dict
 from tests.models import Test, ProblemTest, TestResult
-from tests.serializers import AllTestListSerializer, TestSerializer, SubmitTestSerializer
+from tests.serializers import AllTestListSerializer, TestSerializer, SubmitTestSerializer, TestResultSerializer
 from topics.models import Problem
 from users.models import UserProfile
 
@@ -85,3 +85,10 @@ class SubmitTestView(generics.GenericAPIView):
                 curr = not_answered_question(curr)
             res.append(curr)
         return [res, general_mark]
+
+
+class TestResultView(generics.RetrieveAPIView):
+    serializer_class = TestResultSerializer
+
+    def get_queryset(self):
+        return TestResult.objects.filter(id=self.kwargs['pk'])
