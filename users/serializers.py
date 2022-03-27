@@ -1,11 +1,12 @@
-from collections import Counter
-
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
+from django.core.validators import validate_email
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, PasswordField
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from misc.validators import simple_email_validation
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -20,13 +21,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         email = attrs.get('email', '')
-        c = Counter(email)
-        if len(User.objects.filter(email=email).all()) == 1:
+        simple_email_validation(email)
+        validate_email(email)
+        if len(User.objects.filter(email=email).all()) >= 1:
             raise serializers.ValidationError("User with this email already exist")
-        if c['@'] != 1:
-            raise serializers.ValidationError("Email should contain '@' sign")
-        if not c['.']:
-            raise serializers.ValidationError("Email is not valid")
 
         username = attrs.get('username', '')
 
@@ -40,25 +38,25 @@ class UserSerializer(serializers.ModelSerializer):
                                    password=make_password(validated_data['password']))
 
 
-class CustomTokenObtainSerializer(serializers.Serializer):
+class EmailTokenObtainSerializer(serializers.Serializer):
     username_field = User.EMAIL_FIELD
 
     def __init__(self, *args, **kwargs):
-        super(CustomTokenObtainSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields[self.username_field] = serializers.CharField()
         self.fields['password'] = PasswordField()
 
     def validate(self, attrs):
-        self.user = User.objects.filter(email=attrs[self.username_field]).first()
+        user = User.objects.filter(email=attrs[self.username_field]).first()
 
-        if not self.user:
+        if not user:
             raise ValidationError('User with such email does not exist.')
 
-        if not self.user.check_password(attrs['password']):
+        if not user.check_password(attrs['password']):
             raise ValidationError('Incorrect credentials.')
 
-        if self.user is None or not self.user.is_active:
+        if user is None or not user.is_active:
             raise ValidationError('No active account found with the given credentials')
 
         return {}
@@ -69,18 +67,38 @@ class CustomTokenObtainSerializer(serializers.Serializer):
             'Must implement `get_token` method for `MyTokenObtainSerializer` subclasses')
 
 
-class CustomTokenObtainPairSerializer(CustomTokenObtainSerializer):
+class EmailTokenObtainPairSerializer(EmailTokenObtainSerializer):
     @classmethod
     def get_token(cls, user):
         return RefreshToken.for_user(user)
 
     def validate(self, attrs):
-        data = super(CustomTokenObtainPairSerializer, self).validate(attrs)
+        email = attrs['email']
+        simple_email_validation(email)
+        validate_email(email)
+        user = User.objects.filter(email=email).first()
+        if not user:
+            raise serializers.ValidationError("User with given email does not exist.")
+        data = super().validate(attrs)
 
-        refresh = self.get_token(self.user)
+        refresh = self.get_token(user)
 
         data['refresh'] = str(refresh)
         data['access'] = str(refresh.access_token)
         return data
 
 
+class UsernameTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        user = User.objects.filter(username=attrs['username']).first()
+
+        if not user:
+            raise serializers.ValidationError("User with given username does not exist.")
+
+        data = super().validate(attrs)
+        refresh = self.get_token(user)
+
+        data['refresh'] = str(refresh)
+        data['access'] = str(refresh.access_token)
+
+        return data
