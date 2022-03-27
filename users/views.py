@@ -2,8 +2,11 @@ from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from users.serializers import UserSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+from users.serializers import UserSerializer, CustomTokenObtainPairSerializer
 
 
 class RegisterView(generics.GenericAPIView):
@@ -17,6 +20,13 @@ class RegisterView(generics.GenericAPIView):
         serializer.save()
         user_data = serializer.data
         return Response(user_data, status.HTTP_201_CREATED)
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    def get_serializer_class(self):
+        if "email" in self.request.data:
+            return CustomTokenObtainPairSerializer
+        return TokenObtainPairSerializer
 
 
 class BlacklistRefreshView(APIView):
