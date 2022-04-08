@@ -114,7 +114,9 @@ DJOSER = {
     "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
-    'SERIALIZERS': {},
+    'SERIALIZERS': {
+        "user_create": "users.serializers.UserSerializer"
+    },
 }
 
 REST_FRAMEWORK = {

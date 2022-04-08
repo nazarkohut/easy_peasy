@@ -1,6 +1,6 @@
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.core.validators import validate_email
+from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, PasswordField
@@ -9,7 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from misc.validators import simple_email_validation
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(UserCreateSerializer):
     email = serializers.CharField(required=True)
     first_name = serializers.CharField(max_length=64)
     last_name = serializers.CharField(max_length=64)
@@ -31,11 +31,6 @@ class UserSerializer(serializers.ModelSerializer):
         if not username.isalnum():
             raise serializers.ValidationError("The username should contain only alphanumeric character")
         return attrs
-
-    def create(self, validated_data):
-        return User.objects.create(email=validated_data['email'], first_name=validated_data['first_name'],
-                                   last_name=validated_data['last_name'], username=validated_data['username'],
-                                   password=make_password(validated_data['password']))
 
 
 class EmailTokenObtainSerializer(serializers.Serializer):
