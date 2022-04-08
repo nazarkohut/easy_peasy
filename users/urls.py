@@ -1,10 +1,8 @@
 from django.urls import path
 
-# from users.serializers import CustomTokenObtainPairSerializer
 from users.views import RegisterView, BlacklistRefreshView, CustomTokenObtainPairView
 
 from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
     TokenRefreshView,
 )
 
