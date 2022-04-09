@@ -98,13 +98,6 @@ DATABASES = {
     }
 }
 
-# Checked sending emails to user email
-# EMAIL_USE_TLS = True
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_HOST_USER = "email"
-# EMAIL_HOST_PASSWORD = "email_password"
-# EMAIL_PORT = 587
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 SITE_NAME = "EasyPeasy"
@@ -115,8 +108,13 @@ DJOSER = {
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
     'SERIALIZERS': {
-        "user_create": "users.serializers.UserSerializer"
+        "user_create": "users.serializers.UserSerializer",
     },
+    'EMAIL': {
+        'activation': 'misc.emails_controller.emails.ActivationEmail',
+        "password_reset": "misc.emails_controller.emails.PasswordResetEmail",
+        "password_changed_confirmation": "misc.emails_controller.emails.PasswordChangedConfirmationEmail",
+    }
 }
 
 REST_FRAMEWORK = {
