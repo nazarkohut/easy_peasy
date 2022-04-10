@@ -3,7 +3,8 @@ from django.core.validators import validate_email
 from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, PasswordField
+from rest_framework_simplejwt.serializers import PasswordField, TokenObtainSerializer
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from misc.validators import simple_email_validation
@@ -40,7 +41,7 @@ class EmailTokenObtainSerializer(serializers.Serializer):
         super().__init__(*args, **kwargs)
 
         self.fields[self.username_field] = serializers.CharField()
-        self.fields['password'] = PasswordField()
+        self.fields['password'] = PasswordField(min_length=6)
 
     def validate(self, attrs):
         user = User.objects.filter(email=attrs[self.username_field]).first()
@@ -83,7 +84,19 @@ class EmailTokenObtainPairSerializer(EmailTokenObtainSerializer):
         return data
 
 
-class UsernameTokenObtainPairSerializer(TokenObtainPairSerializer):
+class CustomTokenObtainSerializer(TokenObtainSerializer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password'] = PasswordField(min_length=6)
+
+
+class CustomTokenObtainPairSerializer(CustomTokenObtainSerializer):
+    @classmethod
+    def get_token(cls, user):
+        return RefreshToken.for_user(user)
+
+
+class UsernameTokenObtainPairSerializer(CustomTokenObtainPairSerializer):
     def validate(self, attrs):
         user = User.objects.filter(username=attrs['username']).first()
 
@@ -97,3 +110,16 @@ class UsernameTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['access'] = str(refresh.access_token)
 
         return data
+
+
+class BlackListSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = BlacklistedToken
+        fields = ('refresh', )
+
+    def validate(self, attrs):
+        if 'refresh' not in attrs:
+            raise ValidationError({"refresh": ["This field is required"]})
+        if not attrs['refresh']:
+            raise ValidationError({"refresh": ["May not be blank"]})
+        return attrs
