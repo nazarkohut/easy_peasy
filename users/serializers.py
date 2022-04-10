@@ -4,6 +4,7 @@ from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, PasswordField
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from misc.validators import simple_email_validation
@@ -97,3 +98,16 @@ class UsernameTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['access'] = str(refresh.access_token)
 
         return data
+
+
+class BlackListSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = BlacklistedToken
+        fields = ('refresh', )
+
+    def validate(self, attrs):
+        if 'refresh' not in attrs:
+            raise ValidationError({"refresh": ["This field is required"]})
+        if not attrs['refresh']:
+            raise ValidationError({"refresh": ["May not be blank"]})
+        return attrs
