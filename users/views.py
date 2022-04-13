@@ -1,7 +1,7 @@
 from rest_framework import status, generics
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -23,5 +23,11 @@ class BlacklistRefreshView(generics.GenericAPIView):
         serializer = self.get_serializer()
         data = serializer.validate(attrs=request.data)
         token = RefreshToken(data.get('refresh'))
+        self.check_user_permission(user_id=request.user.id, requested_id=token.payload["user_id"])
         token.blacklist()
         return Response({"message": "Success"}, status.HTTP_200_OK)
+
+    @staticmethod
+    def check_user_permission(user_id, requested_id):
+        if user_id != requested_id:
+            raise PermissionDenied("You do not have permission to logout another user")

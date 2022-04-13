@@ -297,6 +297,68 @@ paths:
                   value: '{"non_field_errors":["User with given email does not exist."]}'
                 username_does_not_exist:
                   value: '{"non_field_errors":["User with given username does not exist."]}'
+  /auth/users/logout/:
+    post:
+      tags:
+        - auth
+      description: Logout user by blacklisting refresh token.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/users_logout_body'
+            examples:
+              expired_token:
+                value: |-
+                  {
+                     "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY1MTE0NDMxMSwianRpIjoiM2I2Y2ViNDAzODE4NDg2ZjkwZDgwNWNjMTU5NWZhYmMiLCJ1c2VyX2lkIjozfQ.X_v8l5ukldywAl98GDCWqIsYoua8N9J5gz3Cloj5L0I",
+                  }
+              success:
+                value: "{\n   \"refresh\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY1MTE0NDMxMSwianRpIjoiM2I2Y2ViNDAzODE4NDg2ZjkwZDgwNWNjMTU5NWZhYmMiLCJ1c2VyX2lkIjozfQ.X_v8l5ukldywAl98GDCWqIsYoua8N9J5gz3Cloj5L0I\"  \n}"
+              invalid_token:
+                value: "{\n    \"refresh\": \"invalid_refresh_token\"    \n}"
+              blank_token:
+                value: "{\n    \"refresh\": \"\"    \n}"
+              empty_body:
+                value: "{\n    \n}"
+              another_user:
+                value: '{"refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY1MTE1MDE0MSwianRpIjoiNDJmNTRkODNkMTIxNGU0NGFiNzNlMTEzMjM5OTI5NTIiLCJ1c2VyX2lkIjozfQ.KP2i_sFFeT5PiDu6Psa_TWSdeyE9bowVWzCWX79r83U"}'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              examples:
+                success:
+                  value: '{"message":"Success"}'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+              examples:
+                invalid_token:
+                  value: '{"message":"Token is invalid or expired"}'
+                expired_token:
+                  value: '{"message":"Token is invalid or expired"}'
+                blank_token:
+                  value: '{"refresh":["May not be blank"]}'
+                empty_body:
+                  value: '{"refresh":["This field is required"]}'
+        "401":
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+              examples:
+                unautorized:
+                  value: '{"detail":"Authentication credentials were not provided."}'
+                another_user:
+                  value: '{"detail": "You do not have permission to logout another user"}'
       servers:
       - url: http://127.0.0.1:8000
     servers:
@@ -431,6 +493,13 @@ components:
           type: array
           items:
             type: string
+    users_logout_body:
+      type: object
+      properties:
+        refresh:
+          type: string
+        message:
+          type: string
   securitySchemes:
     oauth2:
       type: oauth2
