@@ -1,5 +1,3 @@
-from rest_framework.reverse import reverse
-
 from users.tests.test_setup import TestSetup
 
 
@@ -7,12 +5,12 @@ class TestAuthenticationSetup(TestSetup):
     def setUp(self):
         super().setUp()
         self.curr_user = self.client.post(
-            path=reverse('login'),
+            path=self.login_url,
             data={"username": "username",
                   "password": "password"}, format='json').data
 
         self.another_user = self.client.post(
-            path=reverse('login'),
+            path=self.login_url,
             data={"username": "another_username",
                   "password": "password"}, format='json').data
 

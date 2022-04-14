@@ -355,10 +355,60 @@ paths:
               schema:
                 $ref: '#/components/schemas/inline_response_401'
               examples:
-                unautorized:
+                unauthorized:
                   value: '{"detail":"Authentication credentials were not provided."}'
                 another_user:
                   value: '{"detail": "You do not have permission to logout another user"}'
+
+  /auth/users/reset_password/:
+    post:
+      tags:
+        - auth
+      description: Sends email to user that does not remember his password.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/users_reset_password_body'
+            examples:
+              success:
+                value: |-
+                  {
+                      "email": "email@gmail.com"
+                  }
+              invalid_email:
+                value: |-
+                  {
+                      "email": "email@"
+                  }
+              blank_email:
+                value: |-
+                  {
+                      "email": ""
+                  }
+              email_not_found:
+                value: |-
+                  {
+                      "email": "email_that_does_not_exist@gmail.com"
+                  }
+      responses:
+        "204":
+          description: Is returned when everything works fine and email is send.
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+              examples:
+                invalid_email:
+                  value: '{"email":["Enter a valid email address."]}'
+                blank_email:
+                  value: '{"email":["This field may not be blank."]}'
+                empty_body:
+                  value: '{"email":["This field is required."]}'
+                email_not_found:
+                  value: '{"non_field_errors": ["User with given email does not exist."]}'
       servers:
       - url: http://127.0.0.1:8000
     servers:
@@ -499,6 +549,11 @@ components:
         refresh:
           type: string
         message:
+          type: string
+    users_reset_password_body:
+      type: object
+      properties:
+        email:
           type: string
   securitySchemes:
     oauth2:

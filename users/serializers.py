@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.core.validators import validate_email
-from djoser.serializers import UserCreateSerializer
+from djoser.serializers import UserCreateSerializer, SendEmailResetSerializer
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.serializers import PasswordField, TokenObtainSerializer
@@ -122,4 +122,12 @@ class BlackListSerializer(serializers.HyperlinkedModelSerializer):
             raise ValidationError({"refresh": ["This field is required"]})
         if not attrs['refresh']:
             raise ValidationError({"refresh": ["May not be blank"]})
+        return attrs
+
+
+class CustomSendEmailResetSerializer(SendEmailResetSerializer):
+    def validate(self, attrs):
+        email = attrs.get('email', '')
+        if not User.objects.filter(email=email).first():
+            raise serializers.ValidationError(self.default_error_messages['email_not_found'])
         return attrs

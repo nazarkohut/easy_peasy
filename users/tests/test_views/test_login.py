@@ -1,5 +1,4 @@
 from django.utils.encoding import force_text
-from rest_framework.reverse import reverse
 
 from users.tests.test_setup import TestSetup
 
@@ -7,7 +6,7 @@ from users.tests.test_setup import TestSetup
 class TestLogin(TestSetup):
     def test_empty_login(self):
         data = {}
-        response = self.client.post(reverse("login"), data=data)
+        response = self.client.post(self.login_url, data=data)
         error = {"username": ["This field is required."], "password": ["This field is required."]}
         self.assertJSONEqual(force_text(response.content), error)
         self.assertEqual(response.status_code, 400)
@@ -17,7 +16,7 @@ class TestLogin(TestSetup):
             "email": "",
             "password": "password"
         }
-        response = self.client.post(reverse("login"), data=data)
+        response = self.client.post(self.login_url, data=data)
         error = {'email': ['This field may not be blank.']}
         self.assertJSONEqual(force_text(response.content), error)
         self.assertEqual(response.status_code, 400)
@@ -27,7 +26,7 @@ class TestLogin(TestSetup):
             "username": "",
             "password": "password"
         }
-        response = self.client.post(reverse("login"), data=data)
+        response = self.client.post(self.login_url, data=data)
         error = {'username': ['This field may not be blank.']}
         self.assertJSONEqual(force_text(response.content), error)
         self.assertEqual(response.status_code, 400)
@@ -37,7 +36,7 @@ class TestLogin(TestSetup):
             "email": "tutahore@norwegischlernen.inf",
             "password": "password"
         }
-        response = self.client.post(reverse("login"), data=data)
+        response = self.client.post(self.login_url, data=data)
         error = {"non_field_errors": ["User with given email does not exist."]}
         self.assertJSONEqual(force_text(response.content), error)
         self.assertEqual(response.status_code, 400)
@@ -47,7 +46,7 @@ class TestLogin(TestSetup):
             "username": "username1000",
             "password": "password"
         }
-        response = self.client.post(reverse("login"), data=data)
+        response = self.client.post(self.login_url, data=data)
         error = {"non_field_errors": ["User with given username does not exist."]}
         self.assertJSONEqual(force_text(response.content), error)
         self.assertEqual(response.status_code, 400)
@@ -57,7 +56,7 @@ class TestLogin(TestSetup):
             "email": "tutahore@norwegischlernen.info",
             "password": "passw"
         }
-        response = self.client.post(reverse("login"), data=data)
+        response = self.client.post(self.login_url, data=data)
         self.assertEqual(response.status_code, 400)
         error = {"password": ["Ensure this field has at least 6 characters."]}
         response_content = force_text(response.content)
@@ -69,7 +68,7 @@ class TestLogin(TestSetup):
             "password": "passw"
         }
 
-        response = self.client.post(reverse("login"), data=data)
+        response = self.client.post(self.login_url, data=data)
         self.assertEqual(response.status_code, 400)
         error = {"password": ["Ensure this field has at least 6 characters."]}
         response_content = force_text(response.content)
@@ -80,7 +79,7 @@ class TestLogin(TestSetup):
             "email": "tutahore@norwegischlernen.info",
             "password": "password"
         }
-        response = self.client.post(reverse("login"), data=data)
+        response = self.client.post(self.login_url, data=data)
         response_content = force_text(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertIn("refresh", container=response_content)
@@ -91,7 +90,7 @@ class TestLogin(TestSetup):
             "username": "username",
             "password": "password"
         }
-        response = self.client.post(reverse("login"), data=data)
+        response = self.client.post(self.login_url, data=data)
         response_content = force_text(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertIn("refresh", container=response_content)

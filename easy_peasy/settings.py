@@ -109,6 +109,7 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': True,
     'SERIALIZERS': {
         "user_create": "users.serializers.UserSerializer",
+        "password_reset": "users.serializers.CustomSendEmailResetSerializer"
     },
     'EMAIL': {
         'activation': 'misc.emails_controller.emails.ActivationEmail',
