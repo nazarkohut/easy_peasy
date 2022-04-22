@@ -22,4 +22,4 @@ def simple_email_validation(email):
     """This function is not main for email validation; it is intended to better user experience"""
     c = Counter(email)
     if c['@'] != 1:
-        raise ValidationError("Email should contain '@' sign")
+        raise ValidationError({"email": ["Email should contain '@' sign"]})

@@ -11,10 +11,11 @@ from misc.validators import simple_email_validation
 
 
 class UserSerializer(UserCreateSerializer):
-    email = serializers.CharField(required=True)
-    first_name = serializers.CharField(max_length=64)
-    last_name = serializers.CharField(max_length=64)
-    password = serializers.CharField(max_length=64, min_length=6, write_only=True, required=True)
+    email = serializers.CharField(required=True, max_length=254)
+    username = serializers.CharField(required=True, max_length=128)
+    first_name = serializers.CharField(required=True, max_length=64)
+    last_name = serializers.CharField(required=True, max_length=64)
+    password = serializers.CharField(required=True, max_length=64, min_length=6, write_only=True)
 
     class Meta:
         model = User
@@ -26,11 +27,13 @@ class UserSerializer(UserCreateSerializer):
         validate_email(email)
         if len(User.objects.filter(email=email).all()) >= 1:
             raise serializers.ValidationError("User with this email already exist")
-
         username = attrs.get('username', '')
 
         if not username.isalnum():
             raise serializers.ValidationError("The username should contain only alphanumeric character")
+
+        if len(User.objects.filter(username=username).all()) >= 1:
+            raise serializers.ValidationError("User with this username already exist")
         return attrs
 
 

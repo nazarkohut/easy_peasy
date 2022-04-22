@@ -67,7 +67,6 @@ class TestLogin(TestSetup):
             "email": "tutahore@norwegischlernen.info",
             "password": "passw"
         }
-
         response = self.client.post(self.login_url, data=data)
         self.assertEqual(response.status_code, 400)
         error = {"password": ["Ensure this field has at least 6 characters."]}

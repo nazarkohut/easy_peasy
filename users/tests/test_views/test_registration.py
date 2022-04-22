@@ -38,7 +38,7 @@ class TestRegistration(TestSetup):
             "password": "password"
         }
         response = self.client.post(self.registration_url, data=data, format='json')
-        error = {"non_field_errors": ["Email should contain '@' sign"]}
+        error = {"email": ["Email should contain '@' sign"]}
         self.assertEqual(response.status_code, 400)
         response_content = force_text(response.content)
         self.assertJSONEqual(response_content, error)
@@ -66,7 +66,7 @@ class TestRegistration(TestSetup):
             "password": "password"
         }
         response = self.client.post(self.registration_url, data=data, format='json')
-        error = {"username": ["A user with that username already exists."]}
+        error = {'non_field_errors': ['User with this email already exist']}
         self.assertEqual(response.status_code, 400)
         response_content = force_text(response.content)
         self.assertJSONEqual(response_content, error)
@@ -80,12 +80,84 @@ class TestRegistration(TestSetup):
             "password": "password"
         }
         response = self.client.post(self.registration_url, data=data, format='json')
-        error = {"non_field_errors": ["User with this email already exist"]}
+        error = {'non_field_errors': ['User with this email already exist']}
         self.assertEqual(response.status_code, 400)
         response_content = force_text(response.content)
         self.assertJSONEqual(response_content, error)
 
-    def test_password_length_registration(self):
+    def test_max_email_length_registration(self):
+        data = {
+            # note that email will be checked after all fields(that is why we do not have unique email error in here)
+            "email": "tutahore" * 32 + "@norwegischlernen.info",
+            "first_name": "first_name",
+            "last_name": "last_name",
+            "username": "username1",
+            "password": "password"
+        }
+        response = self.client.post(self.registration_url, data=data, format='json')
+        error = {"email": ["Ensure this field has no more than 254 characters."]}
+        self.assertEqual(response.status_code, 400)
+        response_content = force_text(response.content)
+        self.assertJSONEqual(response_content, error)
+
+    def test_max_username_length_registration(self):
+        data = {
+            # note that email will be checked after all fields(that is why we do not have unique email error in here)
+            "email": "tutahore@norwegischlernen.info",
+            "first_name": "first_name",
+            "last_name": "last_name",
+            "username": "username" * 25,
+            "password": "password"
+        }
+        response = self.client.post(self.registration_url, data=data, format='json')
+        error = {"username": ["Ensure this field has no more than 128 characters."]}
+        self.assertEqual(response.status_code, 400)
+        response_content = force_text(response.content)
+        self.assertJSONEqual(response_content, error)
+
+    def test_max_first_name_length_registration(self):
+        data = {
+            "email": "tutahore@norwegischlernen.info",
+            "first_name": "first_name" * 7,
+            "last_name": "last_name",
+            "username": "username1",
+            "password": "password"
+        }
+        response = self.client.post(self.registration_url, data=data, format='json')
+        error = {"first_name": ["Ensure this field has no more than 64 characters."]}
+        self.assertEqual(response.status_code, 400)
+        response_content = force_text(response.content)
+        self.assertJSONEqual(response_content, error)
+
+    def test_max_last_name_length_registration(self):
+        data = {
+            "email": "tutahore@norwegischlernen.info",
+            "first_name": "first_name",
+            "last_name": "last_name" * 8,
+            "username": "username1",
+            "password": "password"
+        }
+        response = self.client.post(self.registration_url, data=data, format='json')
+        error = {"last_name": ["Ensure this field has no more than 64 characters."]}
+        self.assertEqual(response.status_code, 400)
+        response_content = force_text(response.content)
+        self.assertJSONEqual(response_content, error)
+
+    def test_max_password_length_registration(self):
+        data = {
+            "email": "tutahore@norwegischlernen.info",
+            "first_name": "first_name",
+            "last_name": "last_name",
+            "username": "username1",
+            "password": "password" * 9
+        }
+        response = self.client.post(self.registration_url, data=data, format='json')
+        error = {"password": ["Ensure this field has no more than 64 characters."]}
+        self.assertEqual(response.status_code, 400)
+        response_content = force_text(response.content)
+        self.assertJSONEqual(response_content, error)
+
+    def test_min_password_length_registration(self):
         data = {"email": "email1@gmail.com",
                 "first_name": "first_name",
                 "last_name": "last_name",
