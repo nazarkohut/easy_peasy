@@ -23,3 +23,8 @@ def simple_email_validation(email):
     c = Counter(email)
     if c['@'] != 1:
         raise ValidationError({"email": ["Email should contain '@' sign"]})
+
+
+def isalnum_validator(field: str):
+    if not field.isalnum():
+        raise ValidationError(f"This field should contain only alphanumeric character")

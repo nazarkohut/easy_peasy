@@ -7,14 +7,14 @@ from rest_framework_simplejwt.serializers import PasswordField, TokenObtainSeria
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from misc.validators import simple_email_validation
+from misc.validators import simple_email_validation, isalnum_validator
 
 
 class UserSerializer(UserCreateSerializer):
     email = serializers.CharField(required=True, max_length=254)
-    username = serializers.CharField(required=True, max_length=128)
-    first_name = serializers.CharField(required=True, max_length=64)
-    last_name = serializers.CharField(required=True, max_length=64)
+    username = serializers.CharField(required=True, max_length=128, validators=[isalnum_validator])
+    first_name = serializers.CharField(required=True, max_length=64, validators=[isalnum_validator])
+    last_name = serializers.CharField(required=True, max_length=64, validators=[isalnum_validator])
     password = serializers.CharField(required=True, max_length=64, min_length=6, write_only=True)
 
     class Meta:
@@ -27,11 +27,8 @@ class UserSerializer(UserCreateSerializer):
         validate_email(email)
         if len(User.objects.filter(email=email).all()) >= 1:
             raise serializers.ValidationError("User with this email already exist")
+
         username = attrs.get('username', '')
-
-        if not username.isalnum():
-            raise serializers.ValidationError("The username should contain only alphanumeric character")
-
         if len(User.objects.filter(username=username).all()) >= 1:
             raise serializers.ValidationError("User with this username already exist")
         return attrs
@@ -43,22 +40,22 @@ class EmailTokenObtainSerializer(serializers.Serializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields[self.username_field] = serializers.CharField()
+        self.fields[self.username_field] = serializers.CharField(max_length=254)
         self.fields['password'] = PasswordField(min_length=6)
 
     def validate(self, attrs):
-        user = User.objects.filter(email=attrs[self.username_field]).first()
+        email = attrs[self.username_field]
+        user = User.objects.filter(email=email).first()
 
         if not user:
-            raise ValidationError('User with such email does not exist.')
-
+            raise serializers.ValidationError("User with given email does not exist.")
         if not user.check_password(attrs['password']):
-            raise ValidationError('Incorrect credentials.')
+            raise ValidationError({'detail': ['This credentials did not work. Please, try again.']})
 
         if user is None or not user.is_active:
-            raise ValidationError('No active account found with the given credentials')
+            raise ValidationError({'detail': ['No active account found with the given credentials']})
 
-        return {}
+        return user
 
     @classmethod
     def get_token(cls, user):
@@ -75,22 +72,36 @@ class EmailTokenObtainPairSerializer(EmailTokenObtainSerializer):
         email = attrs['email']
         simple_email_validation(email)
         validate_email(email)
-        user = User.objects.filter(email=email).first()
-        if not user:
-            raise serializers.ValidationError("User with given email does not exist.")
-        data = super().validate(attrs)
+        user = super().validate(attrs)
 
         refresh = self.get_token(user)
 
-        data['refresh'] = str(refresh)
-        data['access'] = str(refresh.access_token)
-        return data
+        return {
+            'access': str(refresh.access_token),
+            'refresh': str(refresh)
+        }
 
 
 class CustomTokenObtainSerializer(TokenObtainSerializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields[self.username_field] = serializers.CharField(max_length=128, validators=[isalnum_validator])
         self.fields['password'] = PasswordField(min_length=6)
+
+    def validate(self, attrs):
+        username = attrs[self.username_field]
+
+        user = User.objects.filter(username=username).first()
+
+        if not user:
+            raise serializers.ValidationError("User with given username does not exist.")
+
+        if not user.check_password(attrs['password']):
+            raise ValidationError({'detail': ['This credentials did not work. Please, try again.']})
+
+        if user is None or not user.is_active:
+            raise ValidationError({'detail': ['No active account found with the given credentials']})
+        return user
 
 
 class CustomTokenObtainPairSerializer(CustomTokenObtainSerializer):
@@ -101,24 +112,18 @@ class CustomTokenObtainPairSerializer(CustomTokenObtainSerializer):
 
 class UsernameTokenObtainPairSerializer(CustomTokenObtainPairSerializer):
     def validate(self, attrs):
-        user = User.objects.filter(username=attrs['username']).first()
-
-        if not user:
-            raise serializers.ValidationError("User with given username does not exist.")
-
-        data = super().validate(attrs)
+        user = super().validate(attrs)
         refresh = self.get_token(user)
-
-        data['refresh'] = str(refresh)
-        data['access'] = str(refresh.access_token)
-
-        return data
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token)
+        }
 
 
 class BlackListSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = BlacklistedToken
-        fields = ('refresh', )
+        fields = ('refresh',)
 
     def validate(self, attrs):
         if 'refresh' not in attrs:

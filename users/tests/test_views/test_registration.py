@@ -18,8 +18,8 @@ class TestRegistration(TestSetup):
     def test_wrong_email1_registration(self):
         data = {
             "email": "tutahore@norwegischlerneninfo",
-            "first_name": "first_name",
-            "last_name": "last_name",
+            "first_name": "first",
+            "last_name": "last",
             "username": "username1",
             "password": "password"
         }
@@ -32,8 +32,8 @@ class TestRegistration(TestSetup):
     def test_wrong_email2_registration(self):
         data = {
             "email": "tutahorenorwegischlernen.info",
-            "first_name": "first_name",
-            "last_name": "last_name",
+            "first_name": "first",
+            "last_name": "last",
             "username": "username1",
             "password": "password"
         }
@@ -46,8 +46,8 @@ class TestRegistration(TestSetup):
     def test_wrong_email3_registration(self):
         data = {
             "email": "tutahore@norwegischlernen.i",
-            "first_name": "first_name",
-            "last_name": "last_name",
+            "first_name": "first",
+            "last_name": "last",
             "username": "username1",
             "password": "password"
         }
@@ -57,11 +57,12 @@ class TestRegistration(TestSetup):
         response_content = force_text(response.content)
         self.assertJSONEqual(response_content, error)
 
+    # unique errors
     def test_unique_username_registration(self):
         data = {
             "email": "tutahore@norwegischlernen.info",
-            "first_name": "first_name",
-            "last_name": "last_name",
+            "first_name": "First",
+            "last_name": "Last",
             "username": "username",
             "password": "password"
         }
@@ -74,8 +75,8 @@ class TestRegistration(TestSetup):
     def test_unique_email_registration(self):
         data = {
             "email": "tutahore@norwegischlernen.info",
-            "first_name": "first_name",
-            "last_name": "last_name",
+            "first_name": "first",
+            "last_name": "last",
             "username": "username1",
             "password": "password"
         }
@@ -85,12 +86,13 @@ class TestRegistration(TestSetup):
         response_content = force_text(response.content)
         self.assertJSONEqual(response_content, error)
 
+    # fields length
     def test_max_email_length_registration(self):
         data = {
             # note that email will be checked after all fields(that is why we do not have unique email error in here)
             "email": "tutahore" * 32 + "@norwegischlernen.info",
-            "first_name": "first_name",
-            "last_name": "last_name",
+            "first_name": "first",
+            "last_name": "last",
             "username": "username1",
             "password": "password"
         }
@@ -104,8 +106,8 @@ class TestRegistration(TestSetup):
         data = {
             # note that email will be checked after all fields(that is why we do not have unique email error in here)
             "email": "tutahore@norwegischlernen.info",
-            "first_name": "first_name",
-            "last_name": "last_name",
+            "first_name": "first",
+            "last_name": "last",
             "username": "username" * 25,
             "password": "password"
         }
@@ -118,8 +120,8 @@ class TestRegistration(TestSetup):
     def test_max_first_name_length_registration(self):
         data = {
             "email": "tutahore@norwegischlernen.info",
-            "first_name": "first_name" * 7,
-            "last_name": "last_name",
+            "first_name": "first" * 14,
+            "last_name": "last",
             "username": "username1",
             "password": "password"
         }
@@ -132,8 +134,8 @@ class TestRegistration(TestSetup):
     def test_max_last_name_length_registration(self):
         data = {
             "email": "tutahore@norwegischlernen.info",
-            "first_name": "first_name",
-            "last_name": "last_name" * 8,
+            "first_name": "first",
+            "last_name": "last" * 20,
             "username": "username1",
             "password": "password"
         }
@@ -146,8 +148,8 @@ class TestRegistration(TestSetup):
     def test_max_password_length_registration(self):
         data = {
             "email": "tutahore@norwegischlernen.info",
-            "first_name": "first_name",
-            "last_name": "last_name",
+            "first_name": "first",
+            "last_name": "last",
             "username": "username1",
             "password": "password" * 9
         }
@@ -159,8 +161,8 @@ class TestRegistration(TestSetup):
 
     def test_min_password_length_registration(self):
         data = {"email": "email1@gmail.com",
-                "first_name": "first_name",
-                "last_name": "last_name",
+                "first_name": "first",
+                "last_name": "last",
                 "username": "username1",
                 "password": "passw"}
         response = self.client.post(self.registration_url, data=data, format='json')
@@ -169,16 +171,69 @@ class TestRegistration(TestSetup):
         self.assertEqual(response.status_code, 400)
         self.assertJSONEqual(response_content, expected_response)
 
-    def test_successful_registration(self):
+    # Alpha numeric fields
+    def test_username_isalnum_registration(self):
+        data = {"email": "email1@gmail.com",
+                "first_name": "first",
+                "last_name": "last",
+                "username": "user name",
+                "password": "password"}
+        response = self.client.post(self.registration_url, data=data, format='json')
+        error = {"username": ["This field should contain only alphanumeric character"]}
+        response_content = force_text(response.content)
+        self.assertEqual(response.status_code, 400)
+        self.assertJSONEqual(response_content, error)
+
+    def test_last_name_isalnum_registration(self):
+        data = {"email": "email1@gmail.com",
+                "first_name": "first",
+                "last_name": "last_name",
+                "username": "username",
+                "password": "password"}
+        response = self.client.post(self.registration_url, data=data, format='json')
+        error = {"last_name": ["This field should contain only alphanumeric character"]}
+        response_content = force_text(response.content)
+        self.assertEqual(response.status_code, 400)
+        self.assertJSONEqual(response_content, error)
+
+    def test_isalnum_last_and_first_name_registration(self):
+        data = {"email": "email2@gmail.com",
+                "first_name": "first_name",
+                "last_name": "last_name",
+                "username": "username",
+                "password": "password"}
+        response = self.client.post(self.registration_url, data=data, format='json')
+        error = {"first_name": ["This field should contain only alphanumeric character"],
+                 "last_name": ["This field should contain only alphanumeric character"]}
+        response_content = force_text(response.content)
+        self.assertEqual(response.status_code, 400)
+        self.assertJSONEqual(response_content, error)
+
+    def test_isalnum_fields_registration(self):
         data = {"email": "email1@gmail.com",
                 "first_name": "first_name",
                 "last_name": "last_name",
+                "username": "username_",
+                "password": "password"}
+        response = self.client.post(self.registration_url, data=data, format='json')
+        error = {"first_name": ["This field should contain only alphanumeric character"],
+                 "last_name": ["This field should contain only alphanumeric character"],
+                 "username": ["This field should contain only alphanumeric character"]}
+        response_content = force_text(response.content)
+        self.assertEqual(response.status_code, 400)
+        self.assertJSONEqual(response_content, error)
+
+    # Successful
+    def test_successful_registration(self):
+        data = {"email": "email1@gmail.com",
+                "first_name": "first",
+                "last_name": "last",
                 "username": "username1",
                 "password": "password"}
         response = self.client.post(self.registration_url, data=data, format='json')
         expected_response = {"email": "email1@gmail.com",
-                             "first_name": "first_name",
-                             "last_name": "last_name",
+                             "first_name": "first",
+                             "last_name": "last",
                              "username": "username1"}
         response_content = force_text(response.content)
         self.assertEqual(response.status_code, 201)

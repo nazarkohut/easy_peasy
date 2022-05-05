@@ -11,7 +11,7 @@ class TestAuthenticationSetup(TestSetup):
 
         self.another_user = self.client.post(
             path=self.login_url,
-            data={"username": "another_username",
+            data={"username": "anotherUsername",
                   "password": "password"}, format='json').data
 
     def authenticate(self, user: str):
