@@ -5,14 +5,28 @@ from rest_framework.utils import json
 
 from misc.converters import custom_response_with_lists
 from problems.serializers import ProblemSerializer, SubmitProblemSerializer, \
-    AllProblemsListSerializer
-from topics.models import Problem
+    AllProblemsListSerializer, AllProblemsListDetailsSerializer
+from topics.models import Problem, Tag
 
 
 class AllProblemsListView(generics.ListAPIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
     serializer_class = AllProblemsListSerializer
     queryset = Problem.objects.all()
+
+
+class AllProblemsListDetailsView(generics.ListAPIView):
+    # permission_classes = (IsAuthenticated)
+    serializer_class = AllProblemsListDetailsSerializer
+
+    def get_queryset(self):
+        return Tag.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        tags = queryset.values('tag', 'id')
+        # tags = queryset.values_list('tag', flat=True)
+        return Response({"tags": tags})
 
 
 class ProblemView(generics.RetrieveAPIView):

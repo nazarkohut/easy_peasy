@@ -13,13 +13,15 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from easy_peasy.config import secret_key, DB, CLOUDINARY
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -87,9 +89,9 @@ WSGI_APPLICATION = 'easy_peasy.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('NAME'),
+        'NAME': DB["NAME"],
         'USER': 'root',
-        'PASSWORD': os.getenv('connection-string'),
+        'PASSWORD': DB["PASSWORD"],
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
@@ -155,9 +157,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
-    'API_KEY': os.getenv('API_KEY'),
-    'API_SECRET': os.getenv('YOUR CLOUDINARY API SECRET KEY'),
+    'CLOUD_NAME': CLOUDINARY['CLOUD_NAME'],
+    'API_KEY': CLOUDINARY['API_KEY'],
+    'API_SECRET': CLOUDINARY['API_SECRET']
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

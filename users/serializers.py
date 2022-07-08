@@ -66,7 +66,7 @@ class EmailTokenObtainSerializer(serializers.Serializer):
 class EmailTokenObtainPairSerializer(EmailTokenObtainSerializer):
     @classmethod
     def get_token(cls, user):
-        return RefreshToken.for_user(user)
+        return CustomRefreshToken.custom_for_user(user)
 
     def validate(self, attrs):
         email = attrs['email']
@@ -107,7 +107,17 @@ class CustomTokenObtainSerializer(TokenObtainSerializer):
 class CustomTokenObtainPairSerializer(CustomTokenObtainSerializer):
     @classmethod
     def get_token(cls, user):
-        return RefreshToken.for_user(user)
+        token = CustomRefreshToken.custom_for_user(user)
+        return token
+
+
+class CustomRefreshToken(RefreshToken):
+    @classmethod
+    def custom_for_user(cls, user):
+        token = cls.for_user(user)
+        token['full_name'] = user.first_name + " " + user.last_name
+        token['username'] = user.username
+        return token
 
 
 class UsernameTokenObtainPairSerializer(CustomTokenObtainPairSerializer):
@@ -116,7 +126,7 @@ class UsernameTokenObtainPairSerializer(CustomTokenObtainPairSerializer):
         refresh = self.get_token(user)
         return {
             'refresh': str(refresh),
-            'access': str(refresh.access_token)
+            'access': str(refresh.access_token),
         }
 
 
