@@ -27,6 +27,11 @@ paths:
                   {
                       "email" : "email"
                   }
+              email_not_found:
+                value: |-
+                  {
+                      "email" : "email_that_does_not_exist_in_database@gmail.com"
+                  }
       responses:
         "400":
           description: Bad request
@@ -39,6 +44,8 @@ paths:
                   value: '{"email":["This field is required."]}'
                 wrong_email:
                   value: '{"email":["Enter a valid email address."]}'
+                email_not_found:
+                  value: '{"non_field_errors": ["User with given email does not exist."]}'
         "204":
           description: No content
       servers:

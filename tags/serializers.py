@@ -3,6 +3,15 @@ from rest_framework import serializers
 from topics.models import Problem, Tag
 
 
+class AllProblemsTagsListSerializer(serializers.ModelSerializer):
+    # problems = serializers.ReadOnlyField(source='')
+    id = serializers.ReadOnlyField(source='')
+
+    class Meta:
+        model = Tag
+        fields = ('id', )
+
+
 class TagsForSortedByTagsListSerializer(serializers.ModelSerializer):
     problems = serializers.ReadOnlyField(source='')
 

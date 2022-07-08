@@ -4,8 +4,22 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from misc.converters import custom_response_with_lists
-from tags.serializers import ProblemsSortedByTagsListSerializer
-from topics.models import Problem
+from tags.serializers import ProblemsSortedByTagsListSerializer, AllProblemsTagsListSerializer
+from topics.models import Problem, Tag
+
+
+class AllProblemsTagsListView(generics.ListAPIView):
+    # permission_classes = (IsAuthenticated)
+    serializer_class = AllProblemsTagsListSerializer
+
+    def get_queryset(self):
+        return Tag.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        tags = queryset.values('tag', 'id')
+        # tags = queryset.values_list('tag', flat=True)
+        return Response({"tags": tags})
 
 
 class ProblemsSortedByTagsListView(generics.ListAPIView):

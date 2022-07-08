@@ -15,7 +15,7 @@ class TestResetPassword(TestSetup):
         data = {"email": ""}
         response = self.client.post(path=self.reset_password_url, data=data)
         self.assertEqual(response.status_code, 400)
-        error = {"email":["This field may not be blank."]}
+        error = {"email": ["This field may not be blank."]}
         self.assertJSONEqual(force_text(response.content), error)
 
     def test_invalid_email_reset_password(self):
@@ -36,4 +36,3 @@ class TestResetPassword(TestSetup):
         data = {"email": "tutahore@norwegischlernen.info"}
         response = self.client.post(path=self.reset_password_url, data=data)
         self.assertEqual(response.status_code, 204)
-

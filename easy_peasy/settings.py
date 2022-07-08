@@ -13,7 +13,7 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-from easy_peasy.config import secret_key, DB, CLOUDINARY
+from easy_peasy.config import secret_key, DB, CLOUDINARY, CLIENT_DOMAIN, sendgrid_api_key, temporary_default_from_email
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -101,13 +101,23 @@ DATABASES = {
 }
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+SENDGRID_API_KEY = sendgrid_api_key
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = temporary_default_from_email
+
+DOMAIN = CLIENT_DOMAIN
 SITE_NAME = "EasyPeasy"
 
 DJOSER = {
     "PASSWORD_RESET_CONFIRM_URL": "email/reset/confirm/{uid}/{token}",
     "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
-    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
     'SERIALIZERS': {
         "user_create": "users.serializers.UserSerializer",

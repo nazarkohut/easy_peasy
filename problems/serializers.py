@@ -4,15 +4,6 @@ from misc.validators import find_missing
 from topics.models import Problem, Tag, ProblemImage
 
 
-class AllProblemsListDetailsSerializer(serializers.ModelSerializer):
-    # problems = serializers.ReadOnlyField(source='')
-    id = serializers.ReadOnlyField(source='')
-
-    class Meta:
-        model = Tag
-        fields = ('id', )
-
-
 # all problems
 class AllProblemsListSerializer(serializers.ModelSerializer):
     sub_topics = serializers.ReadOnlyField(source='')
