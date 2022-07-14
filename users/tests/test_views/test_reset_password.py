@@ -32,6 +32,13 @@ class TestResetPassword(TestSetup):
         error = {"non_field_errors": ["User with given email does not exist."]}
         self.assertJSONEqual(force_text(response.content), error)
 
+    def test_user_is_not_found_reset_password(self):
+        data = {"email": "not_active_user@gmail.com"}
+        response = self.client.post(path=self.reset_password_url, data=data)
+        self.assertEqual(response.status_code, 400)
+        error = {"non_field_errors": ["User with given email does not exist."]}
+        self.assertJSONEqual(force_text(response.content), error)
+
     def test_success_reset_password(self):
         data = {"email": "tutahore@norwegischlernen.info"}
         response = self.client.post(path=self.reset_password_url, data=data)

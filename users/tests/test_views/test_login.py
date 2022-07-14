@@ -140,7 +140,8 @@ class TestLogin(TestSetup):
         response = self.client.post(self.login_url, data=data)
         response_content = force_text(response.content)
         self.assertEqual(response.status_code, 400)
-        error = {"detail": ["No active account found with the given credentials"]}
+        error = {"detail": ["No active account found with the given credentials. "
+                            "Note: please, make sure you activated your account."]}
         self.assertJSONEqual(response_content, error)
 
     def test_user_is_not_active_email_login(self):
@@ -151,7 +152,8 @@ class TestLogin(TestSetup):
         response = self.client.post(self.login_url, data=data)
         response_content = force_text(response.content)
         self.assertEqual(response.status_code, 400)
-        error = {"detail": ["No active account found with the given credentials"]}
+        error = {"detail": ["No active account found with the given credentials. "
+                            "Note: please, make sure you activated your account."]}
         self.assertJSONEqual(response_content, error)
 
     # Successful

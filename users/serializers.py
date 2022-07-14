@@ -53,7 +53,8 @@ class EmailTokenObtainSerializer(serializers.Serializer):
             raise ValidationError({'detail': ['This credentials did not work. Please, try again.']})
 
         if user is None or not user.is_active:
-            raise ValidationError({'detail': ['No active account found with the given credentials']})
+            raise ValidationError({'detail': ['No active account found with the given credentials. '
+                                              'Note: please, make sure you activated your account.']})
 
         return user
 
@@ -100,7 +101,8 @@ class CustomTokenObtainSerializer(TokenObtainSerializer):
             raise ValidationError({'detail': ['This credentials did not work. Please, try again.']})
 
         if user is None or not user.is_active:
-            raise ValidationError({'detail': ['No active account found with the given credentials']})
+            raise ValidationError({'detail': ['No active account found with the given credentials. '
+                                              'Note: please, make sure you activated your account.']})
         return user
 
 
@@ -146,6 +148,18 @@ class BlackListSerializer(serializers.HyperlinkedModelSerializer):
 class CustomSendEmailResetSerializer(SendEmailResetSerializer):
     def validate(self, attrs):
         email = attrs.get('email', '')
-        if not User.objects.filter(email=email).first():
+        user = User.objects.filter(email=email).first()
+        if not user or not user.is_active:
             raise serializers.ValidationError(self.default_error_messages['email_not_found'])
+        return attrs
+
+
+class CustomResendActivationEmailSerializer(SendEmailResetSerializer):
+    def validate(self, attrs):
+        email = attrs.get('email', '')
+        user = User.objects.filter(email=email).first()
+        if not user:
+            raise serializers.ValidationError(self.default_error_messages['email_not_found'])
+        if user.is_active:
+            raise serializers.ValidationError("User with this email already activated.")
         return attrs

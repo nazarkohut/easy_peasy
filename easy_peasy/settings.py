@@ -13,7 +13,7 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-from easy_peasy.config import secret_key, DB, CLOUDINARY, CLIENT_DOMAIN, sendgrid_api_key, temporary_default_from_email
+from easy_peasy.config import *
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
