@@ -1,9 +1,9 @@
 from django.urls import path
 
-from profiles.views import ProfileView, EditProfileView, ChangePassword
+from profiles.views import ProfileView, ChangePassword
 
 urlpatterns = [
-    path('<user_id>/', ProfileView.as_view(), name='profile'),
-    path('edit/<int:pk>/', EditProfileView.as_view(), name='edit'),
+    path('<int:user_id>/', ProfileView.as_view(), name='edit'),
+    path('', ProfileView.as_view(), name='profile'),
     path('change_password/<int:pk>/', ChangePassword.as_view(), name='change_password')
 ]

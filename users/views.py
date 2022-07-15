@@ -6,7 +6,6 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from easy_peasy import settings
 from users.serializers import EmailTokenObtainPairSerializer, UsernameTokenObtainPairSerializer, BlackListSerializer, \
     CustomResendActivationEmailSerializer
 

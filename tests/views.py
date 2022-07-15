@@ -5,10 +5,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from misc.converters import list_of_dicts_to_one_dict
+from profiles.models import UserProfile
 from tests.models import Test, ProblemTest, TestResult
 from tests.serializers import AllTestListSerializer, TestSerializer, SubmitTestSerializer, TestResultSerializer
 from topics.models import Problem
-from users.models import UserProfile
 
 
 class AllTestsListView(generics.ListAPIView):
