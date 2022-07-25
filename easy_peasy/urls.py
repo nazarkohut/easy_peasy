@@ -26,8 +26,9 @@ urlpatterns = [
     path('auth/', include('users.urls')),
     path('profile/', include('profiles.urls')),
     path('topics/', include('topics.urls')),  # list of problems sorted by topics
-    path('problem/', include('problems.urls')),  # particular problem
+    path('problem/', include('problems.urls')),
     path('tags/', include('tags.urls')),
     path('test/', include('tests.urls')),
     path('auth/', include('djoser.urls')),
+    path('services/', include('services.urls'))
 ]

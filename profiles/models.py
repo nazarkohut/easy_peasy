@@ -10,7 +10,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.SET_NULL, related_name='user_profile', null=True)
     bio = models.TextField(max_length=256, default="")
     location = models.CharField(max_length=128, default="")
-    image = models.ImageField(upload_to='profile_images/', default=None)
+    image = models.ImageField(upload_to='profile_images/', default="")
 
     class Meta:
         db_table = "user_profile"

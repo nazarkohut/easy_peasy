@@ -1,8 +1,7 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from rest_framework import generics
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
@@ -17,6 +16,8 @@ class ProfileView(generics.RetrieveUpdateAPIView):
 
     def get(self, request, *args, **kwargs):
         user = get_object_or_404(User, pk=kwargs['user_id'])
+        if not user.is_active:
+            raise NotFound(detail="Not Found", code=404)
         profile_serializer = ProfileSerializer(user.user_profile)
         return Response(profile_serializer.data)
 

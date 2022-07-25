@@ -22,6 +22,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = ['bio', 'location', 'image', 'previous_tests']
 
+    def validate(self, attrs):
+        print(attrs)
+        return attrs
 
 # --------------------------------------------
 class ProfileForUpdateSerializer(serializers.ModelSerializer):
@@ -50,7 +53,7 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
             instance.user_profile.save()
         return super().update(instance, validated_data)
 
-    def validate(self, attrs): # Same as below
+    def validate(self, attrs):
         request = self.context['request']
         if request.parser_context['kwargs']:
             raise NotFound(detail="Not Found", code=404)
@@ -58,13 +61,16 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
 
 
 class UpdateProfileImageSerializer(serializers.ModelSerializer):
-    image = serializers.CharField(required=True, allow_blank=False)  # Have to make this one required
+    image = serializers.CharField(required=True, allow_blank=False)
+    # required attribute does not work here(so do not try to simplify validate method)
 
     class Meta:
         model = UserProfile
         fields = ['image']
 
-    def validate(self, attrs): # Same as above, some improvements may be applied
+    def validate(self, attrs):
+        if 'image' not in attrs:
+            raise serializers.ValidationError({"image": ["This field is required."]})
         request = self.context['request']
         if request.parser_context['kwargs']:
             raise NotFound(detail="Not Found", code=404)

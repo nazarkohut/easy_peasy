@@ -4,6 +4,10 @@ from users.tests.test_setup import TestSetup
 
 
 class TestLogin(TestSetup):
+    username_max_length = 128
+    email_max_length = 254
+    password_min_length = 6
+
     def test_empty_login(self):
         data = {}
         response = self.client.post(self.login_url, data=data)
@@ -59,7 +63,7 @@ class TestLogin(TestSetup):
         }
         response = self.client.post(self.login_url, data=data)
         self.assertEqual(response.status_code, 400)
-        error = {"username": ["Ensure this field has no more than 128 characters."]}
+        error = {"username": [f"Ensure this field has no more than {self.username_max_length} characters."]}
         response_content = force_text(response.content)
         self.assertJSONEqual(response_content, error)
 
@@ -81,7 +85,7 @@ class TestLogin(TestSetup):
         }
         response = self.client.post(self.login_url, data=data)
         self.assertEqual(response.status_code, 400)
-        error = {"email": ["Ensure this field has no more than 254 characters."]}
+        error = {"email": [f"Ensure this field has no more than {self.email_max_length} characters."]}
         response_content = force_text(response.content)
         self.assertJSONEqual(response_content, error)
 
@@ -93,7 +97,7 @@ class TestLogin(TestSetup):
         }
         response = self.client.post(self.login_url, data=data)
         self.assertEqual(response.status_code, 400)
-        error = {"password": ["Ensure this field has at least 6 characters."]}
+        error = {"password": [f"Ensure this field has at least {self.password_min_length} characters."]}
         response_content = force_text(response.content)
         self.assertJSONEqual(response_content, error)
 
@@ -104,7 +108,7 @@ class TestLogin(TestSetup):
         }
         response = self.client.post(self.login_url, data=data)
         self.assertEqual(response.status_code, 400)
-        error = {"password": ["Ensure this field has at least 6 characters."]}
+        error = {"password": [f"Ensure this field has at least {self.password_min_length} characters."]}
         response_content = force_text(response.content)
         self.assertJSONEqual(response_content, error)
 

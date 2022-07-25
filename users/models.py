@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 
-
 # setting User email field to be unique
 User._meta.get_field('email')._unique = True
 

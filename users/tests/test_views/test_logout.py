@@ -1,6 +1,4 @@
 from django.utils.encoding import force_text
-from djoser import urls
-from rest_framework.reverse import reverse
 
 from users.tests.test_auth_setup import TestAuthenticationSetup
 

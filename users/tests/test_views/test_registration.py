@@ -4,6 +4,11 @@ from users.tests.test_setup import TestSetup
 
 
 class TestRegistration(TestSetup):
+    username_max_length = 128
+    email_max_length = 254
+    first_name_max_length = 64
+    last_name_max_length = 64
+    password_min_length = 6
 
     def test_empty_registration(self):
         data = {}
@@ -97,7 +102,7 @@ class TestRegistration(TestSetup):
             "password": "password"
         }
         response = self.client.post(self.registration_url, data=data, format='json')
-        error = {"email": ["Ensure this field has no more than 254 characters."]}
+        error = {"email": [f"Ensure this field has no more than {self.email_max_length} characters."]}
         self.assertEqual(response.status_code, 400)
         response_content = force_text(response.content)
         self.assertJSONEqual(response_content, error)
@@ -112,7 +117,7 @@ class TestRegistration(TestSetup):
             "password": "password"
         }
         response = self.client.post(self.registration_url, data=data, format='json')
-        error = {"username": ["Ensure this field has no more than 128 characters."]}
+        error = {"username": [f"Ensure this field has no more than {self.username_max_length} characters."]}
         self.assertEqual(response.status_code, 400)
         response_content = force_text(response.content)
         self.assertJSONEqual(response_content, error)
@@ -166,7 +171,7 @@ class TestRegistration(TestSetup):
                 "username": "username1",
                 "password": "passw"}
         response = self.client.post(self.registration_url, data=data, format='json')
-        expected_response = {"password": ["Ensure this field has at least 6 characters."]}
+        expected_response = {"password": [f"Ensure this field has at least {self.password_min_length} characters."]}
         response_content = force_text(response.content)
         self.assertEqual(response.status_code, 400)
         self.assertJSONEqual(response_content, expected_response)
