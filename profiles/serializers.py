@@ -26,6 +26,16 @@ class ProfileSerializer(serializers.ModelSerializer):
         print(attrs)
         return attrs
 
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(source='user_profile')
+
+    class Meta:
+        model = User
+        fields = ("id", "email", "username", "first_name", "last_name", "last_login", "date_joined", "profile")
+        # may be included in future as well "groups": [], "user_permissions": []
+
+
 # --------------------------------------------
 class ProfileForUpdateSerializer(serializers.ModelSerializer):
     bio = serializers.CharField(max_length=256, required=False, allow_blank=True)

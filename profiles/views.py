@@ -6,8 +6,8 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
 from profiles.models import UserProfile
-from profiles.serializers import ProfileSerializer, UpdateProfileSerializer, ChangePasswordSerializer, \
-    UpdateProfileImageSerializer
+from profiles.serializers import UpdateProfileSerializer, ChangePasswordSerializer, \
+    UpdateProfileImageSerializer, UserProfileSerializer
 
 
 class ProfileView(generics.RetrieveUpdateAPIView):
@@ -15,10 +15,14 @@ class ProfileView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
 
     def get(self, request, *args, **kwargs):
-        user = get_object_or_404(User, pk=kwargs['user_id'])
+        user_id = kwargs.get('user_id', None)
+        if not user_id:
+            raise NotFound(detail="Not Found", code=404)
+        user = get_object_or_404(User, pk=user_id)
         if not user.is_active:
             raise NotFound(detail="Not Found", code=404)
-        profile_serializer = ProfileSerializer(user.user_profile)
+
+        profile_serializer = UserProfileSerializer(user)
         return Response(profile_serializer.data)
 
     def get_object(self, **kwargs):
