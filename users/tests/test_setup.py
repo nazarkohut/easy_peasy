@@ -34,6 +34,7 @@ class TestSetup(APITestCase):
         self.reset_password_url = reverse('user-reset-password')
         self.logout_url = reverse('logout')
         self.resend_activation_url = self.registration_url + "resend_activation/"
+        self.set_password_url = self.registration_url + "set_password/"
 
         # constants
         self.big_number = 10 ** 4
@@ -42,3 +43,4 @@ class TestSetup(APITestCase):
         self.first_name_max_length = 64
         self.last_name_max_length = 64
         self.password_min_length = 6
+        self.password_max_length = 64

@@ -30,7 +30,6 @@ class TestResendActivation(TestAuthenticationSetup):
         response = self.client.post(path=self.resend_activation_url, data=data, format='json')
         self.assertEqual(response.status_code, 400)
         error = {"email": [f"Ensure this field has no more than {self.email_max_length} characters."]}
-        print(force_text(response.content))
         self.assertJSONEqual(force_text(response.content), error)
 
     def test_email_not_found(self):

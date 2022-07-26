@@ -6,8 +6,7 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
 from profiles.models import UserProfile
-from profiles.serializers import UpdateProfileSerializer, ChangePasswordSerializer, \
-    UpdateProfileImageSerializer, UserProfileSerializer
+from profiles.serializers import UpdateProfileSerializer,UpdateProfileImageSerializer, UserProfileSerializer
 
 
 class ProfileView(generics.RetrieveUpdateAPIView):
@@ -39,9 +38,3 @@ class ProfileView(generics.RetrieveUpdateAPIView):
         self.serializer_class = UpdateProfileImageSerializer
         self.get_serializer(self.get_object(type='patch'))
         return super().patch(request, *args, **kwargs)
-
-
-class ChangePassword(generics.UpdateAPIView):  # Perhaps, will be changed to djoser change password
-    permission_classes = (IsAuthenticated,)
-    queryset = User.objects.all()
-    serializer_class = ChangePasswordSerializer

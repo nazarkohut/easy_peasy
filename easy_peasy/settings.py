@@ -125,7 +125,8 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': True,
     'SERIALIZERS': {
         "user_create": "users.serializers.UserSerializer",
-        "password_reset": "users.serializers.ResetPasswordSendEmailSerializer"
+        "password_reset": "users.serializers.ResetPasswordSendEmailSerializer",
+        "set_password": "users.serializers.CustomSetPasswordSerializer"
     },
     'EMAIL': {
         'activation': 'misc.emails_controller.emails.ActivationEmail',
@@ -133,6 +134,8 @@ DJOSER = {
         "password_changed_confirmation": "misc.emails_controller.emails.PasswordChangedConfirmationEmail",
     }
 }
+
+PASSWORD_HASHERS = PASSWORD_HASHES_LIST
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [

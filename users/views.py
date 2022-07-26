@@ -18,7 +18,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class BlacklistRefreshView(generics.GenericAPIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
     serializer_class = BlackListSerializer
 
     def post(self, request):

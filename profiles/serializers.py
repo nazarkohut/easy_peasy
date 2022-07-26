@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound
 
@@ -21,10 +20,6 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['bio', 'location', 'image', 'previous_tests']
-
-    def validate(self, attrs):
-        print(attrs)
-        return attrs
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -72,6 +67,7 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
 
 class UpdateProfileImageSerializer(serializers.ModelSerializer):
     image = serializers.CharField(required=True, allow_blank=False)
+
     # required attribute does not work here(so do not try to simplify validate method)
 
     class Meta:
@@ -85,38 +81,3 @@ class UpdateProfileImageSerializer(serializers.ModelSerializer):
         if request.parser_context['kwargs']:
             raise NotFound(detail="Not Found", code=404)
         return attrs
-
-
-# ------------------------------------------------------------------------
-class ChangePasswordSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
-    password2 = serializers.CharField(write_only=True, required=True)
-    old_password = serializers.CharField(write_only=True, required=True)
-
-    class Meta:
-        model = User
-        fields = ['password', 'password2', 'old_password']
-
-    def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
-        return attrs
-
-    def validate_old_password(self, value):
-        user = self.get_user(self.context['request'])
-        if not user.check_password(value):
-            raise serializers.ValidationError({"old_password": "Old password is not correct"})
-        return value
-
-    def update(self, instance, validated_data):
-        user = self.get_user(self.context['request'])
-        if user.pk != instance.pk:
-            raise serializers.ValidationError({"authorize": "You don't have permission for this user."})
-
-        instance.set_password(validated_data['password'])
-        instance.save()
-        return instance
-
-    @staticmethod
-    def get_user(data):
-        return data.user

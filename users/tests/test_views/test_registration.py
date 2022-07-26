@@ -59,14 +59,14 @@ class TestRegistration(TestSetup):
     # unique errors
     def test_unique_username_registration(self):
         data = {
-            "email": "tutahore@norwegischlernen.info",
+            "email": "tutahore1@norwegischlernen.info",
             "first_name": "First",
             "last_name": "Last",
             "username": "username",
             "password": "password"
         }
         response = self.client.post(self.registration_url, data=data, format='json')
-        error = {'non_field_errors': ['User with this email already exist']}
+        error = {'non_field_errors': ['User with this username already exist']}
         self.assertEqual(response.status_code, 400)
         response_content = force_text(response.content)
         self.assertJSONEqual(response_content, error)

@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.validators import validate_email
-from djoser.serializers import UserCreateSerializer, SendEmailResetSerializer
+from djoser.serializers import UserCreateSerializer, SendEmailResetSerializer, PasswordSerializer, \
+    CurrentPasswordSerializer
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.serializers import PasswordField, TokenObtainSerializer
@@ -150,9 +151,6 @@ class CustomSendEmailResetSerializer(SendEmailResetSerializer):
         super().__init__(*args, **kwargs)
         self.fields[self.email_field] = serializers.EmailField(max_length=254)
 
-    def validate(self, attrs):
-        return attrs
-
 
 class ResetPasswordSendEmailSerializer(CustomSendEmailResetSerializer):
     def validate(self, attrs):
@@ -172,3 +170,19 @@ class CustomResendActivationEmailSerializer(CustomSendEmailResetSerializer):
         if user.is_active:
             raise serializers.ValidationError("User with this email already activated.")
         return attrs
+
+
+# Set new password serializers
+class CustomPasswordSerializer(PasswordSerializer):
+    new_password = serializers.CharField(min_length=8, max_length=64)
+
+    def validate(self, attrs):
+        return super().validate(attrs)
+
+
+class CustomCurrentPasswordSerializer(CurrentPasswordSerializer):
+    current_password = serializers.CharField(max_length=64)
+
+
+class CustomSetPasswordSerializer(CustomPasswordSerializer, CustomCurrentPasswordSerializer):
+    pass
