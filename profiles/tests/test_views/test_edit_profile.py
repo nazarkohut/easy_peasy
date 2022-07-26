@@ -4,7 +4,6 @@ from profiles.tests.test_auth_setup import TestProfileAuthenticationSetup
 
 
 class TestEditProfile(TestProfileAuthenticationSetup):
-    big_number = 10 ** 4
     first_name_max_length = 64
     last_name_max_length = 64
     bio_max_length = 256

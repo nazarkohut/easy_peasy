@@ -4,10 +4,6 @@ from users.tests.test_setup import TestSetup
 
 
 class TestLogin(TestSetup):
-    username_max_length = 128
-    email_max_length = 254
-    password_min_length = 6
-
     def test_empty_login(self):
         data = {}
         response = self.client.post(self.login_url, data=data)

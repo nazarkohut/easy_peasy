@@ -4,12 +4,6 @@ from users.tests.test_setup import TestSetup
 
 
 class TestRegistration(TestSetup):
-    username_max_length = 128
-    email_max_length = 254
-    first_name_max_length = 64
-    last_name_max_length = 64
-    password_min_length = 6
-
     def test_empty_registration(self):
         data = {}
         response = self.client.post(self.registration_url, data=data, format='json')

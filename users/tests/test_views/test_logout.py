@@ -4,9 +4,6 @@ from users.tests.test_auth_setup import TestAuthenticationSetup
 
 
 class TestLogout(TestAuthenticationSetup):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def test_unauthenticated_logout(self):
         data = {"refresh": self.curr_user['refresh']}
         response = self.client.post(path=self.logout_url, data=data)

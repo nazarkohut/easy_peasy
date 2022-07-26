@@ -146,6 +146,15 @@ class BlackListSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CustomSendEmailResetSerializer(SendEmailResetSerializer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[self.email_field] = serializers.EmailField(max_length=254)
+
+    def validate(self, attrs):
+        return attrs
+
+
+class ResetPasswordSendEmailSerializer(CustomSendEmailResetSerializer):
     def validate(self, attrs):
         email = attrs.get('email', '')
         user = User.objects.filter(email=email).first()
@@ -154,7 +163,7 @@ class CustomSendEmailResetSerializer(SendEmailResetSerializer):
         return attrs
 
 
-class CustomResendActivationEmailSerializer(SendEmailResetSerializer):
+class CustomResendActivationEmailSerializer(CustomSendEmailResetSerializer):
     def validate(self, attrs):
         email = attrs.get('email', '')
         user = User.objects.filter(email=email).first()
