@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from topics.models import Topic, Subtopic, Problem
+
+from problems.models import Problem
+from topics.models import Topic, Subtopic
 
 
 # serializers for subtopics (They show all information about ALL subtopics and topics)

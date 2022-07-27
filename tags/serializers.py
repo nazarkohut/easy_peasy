@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from topics.models import Problem, Tag
+from problems.models import Problem
+from tags.models import Tag
 
 
 class AllProblemsTagsListSerializer(serializers.ModelSerializer):

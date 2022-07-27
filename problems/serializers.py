@@ -1,10 +1,13 @@
 from rest_framework import serializers
 
 from misc.validators import find_missing
-from topics.models import Problem, Tag, ProblemImage
 
 
 # all problems
+from problems.models import Problem, ProblemImage
+from tags.models import Tag
+
+
 class AllProblemsListSerializer(serializers.ModelSerializer):
     sub_topics = serializers.ReadOnlyField(source='')
     answer = serializers.ReadOnlyField(source='')

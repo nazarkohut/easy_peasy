@@ -4,9 +4,9 @@ from rest_framework.response import Response
 from rest_framework.utils import json
 
 from misc.converters import custom_response_with_lists
+from problems.models import Problem
 from problems.serializers import ProblemSerializer, SubmitProblemSerializer, \
     AllProblemsListSerializer
-from topics.models import Problem, Tag
 
 
 class AllProblemsListView(generics.ListAPIView):

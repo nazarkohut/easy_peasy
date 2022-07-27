@@ -1,7 +1,7 @@
 from django.db import models
 
+from problems.models import Problem
 from profiles.models import UserProfile
-from topics.models import Problem
 
 
 class Test(models.Model):

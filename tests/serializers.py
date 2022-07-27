@@ -2,8 +2,8 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from misc.validators import check_fields
+from problems.models import Problem
 from tests.models import Test, TestResult
-from topics.models import Problem
 
 
 class AllTestListSerializer(serializers.ModelSerializer):

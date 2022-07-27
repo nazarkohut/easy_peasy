@@ -8,7 +8,7 @@ from misc.converters import list_of_dicts_to_one_dict
 from profiles.models import UserProfile
 from tests.models import Test, ProblemTest, TestResult
 from tests.serializers import AllTestListSerializer, TestSerializer, SubmitTestSerializer, TestResultSerializer
-from topics.models import Problem
+from problems.models import Problem
 
 
 class AllTestsListView(generics.ListAPIView):

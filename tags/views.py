@@ -4,8 +4,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from misc.converters import custom_response_with_lists
+from problems.models import Problem
+from tags.models import Tag
 from tags.serializers import ProblemsSortedByTagsListSerializer, AllProblemsTagsListSerializer
-from topics.models import Problem, Tag
 
 
 class AllProblemsTagsListView(generics.ListAPIView):
