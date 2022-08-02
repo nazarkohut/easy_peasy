@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from easy_peasy import settings
+from easy_peasy.config import cloudinary_signature_algorithm
 
 
 class Cloudinary(generics.RetrieveAPIView):
@@ -20,6 +21,6 @@ class Cloudinary(generics.RetrieveAPIView):
         signature = cloudinary.utils.api_sign_request({
             "timestamp": calculated_timestamp,
             "upload_preset": "easy_peasy",
-        }, settings.CLOUDINARY_STORAGE['API_SECRET'])
+        }, settings.CLOUDINARY_STORAGE['API_SECRET'], algorithm=cloudinary_signature_algorithm)
         return Response(
             {"API_KEY": settings.CLOUDINARY['API_KEY'], "signature": signature, "timestamp": calculated_timestamp})
